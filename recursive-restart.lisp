@@ -59,6 +59,10 @@ Example:
 					  (setf ,restart-function-args args)
 					  (go ,re-entry-label))))))))))
 
+(defmacro restart-labels (bindings &body body)
+  `(recursive-restart-case
+    (progn ,@body)
+    ,@bindings))
 
 (defmacro restart-bind* (bindings &body body)
 "Analogous to the relation between let and let*.
