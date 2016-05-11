@@ -1,5 +1,5 @@
 (defpackage :recursive-restart
-  (:use :common-lisp)
+  (:use :common-lisp :alexandria)
   (:export :recursive-restart-case
            :restart-bind*
            :restart-return
@@ -96,7 +96,7 @@ the value of restart function."
                           (&rest ,rest)
                           (return-from ,block-name
                             (apply ,function ,rest)))
-                        `(,name (named-lambda ,(concatenate-symbols name 'handler)
+                        `(,name (named-lambda ,(symbolicate name '-handler)
                                     (&rest ,rest)
                                   (apply #',fn-name ,rest))
                                 ,@key-value-pair)))))
@@ -128,7 +128,7 @@ the body by default. Example:
                           (name function . key-value-pair)
                         binding
                       (with-gensyms (rest)
-                        `(,name (named-lambda ,(concatenate-symbols name 'handler)
+                        `(,name (named-lambda ,(symbolicate name '-handler)
                                     (&rest ,rest)
                                   (prog1
                                       (apply ,function ,rest)
@@ -185,7 +185,7 @@ is equivalent to:
                           (&rest ,rest)
                           (return-from ,block-name
                             (apply ,function ,rest)))
-                        `(,name (named-lambda ,(concatenate-symbols name 'handler)
+                        `(,name (named-lambda ,(symbolicate name '-handler)
                                               (&rest ,rest)
                                               (apply #',fn-name ,rest))
                                 ,@key-value-pair)))))
