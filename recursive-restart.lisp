@@ -28,36 +28,30 @@ Example:
           (format t \"Invoking FOO again...~%\")
           (invoke-restart 'foo))))
 "
-  (let ((case-gensyms (mapcar (lambda (case)
-				(declare (ignore case))
-				(gensym)) cases))
-	(re-entry-label (gensym))
-	(value-form-entered (gensym))
-	(restart-function (gensym))
-	(restart-function-args (gensym))
-	(block-name (gensym)))
-    `(flet ,(loop for name in case-gensyms
-	       for (_ lambda-list . body) in cases
-	       collect `(,name ,lambda-list ,@body))
-       (let ((,value-form-entered nil)
-	     (,restart-function nil)
-	     (,restart-function-args nil))
-	 (block ,block-name
-	   (tagbody
-	      ,re-entry-label
-	      (restart-case
-		  (return-from ,block-name
-		    (if (not ,value-form-entered)
-			(progn
-			  (setf ,value-form-entered t)
-			  ,value-form)
-			(apply ,restart-function ,restart-function-args)))
-		,@(loop for (case-name _ . body) in cases
-		     for function-name in case-gensyms
-		     collect `(,case-name (&rest args)
-					  (setf ,restart-function #',function-name)
-					  (setf ,restart-function-args args)
-					  (go ,re-entry-label))))))))))
+  (let ((case-gensyms (make-gensym-list (length cases) "CASE")))
+    (with-gensyms (re-entry-label value-form-entered restart-function restart-function-args block-name)
+      `(flet ,(loop for name in case-gensyms
+                    for (_ lambda-list . body) in cases
+                    collect `(,name ,lambda-list ,@body))
+         (let ((,value-form-entered nil)
+               (,restart-function nil)
+               (,restart-function-args nil))
+           (block ,block-name
+             (tagbody
+               ,re-entry-label
+               (restart-case
+                   (return-from ,block-name
+                     (if (not ,value-form-entered)
+                         (progn
+                           (setf ,value-form-entered t)
+                           ,value-form)
+                         (apply ,restart-function ,restart-function-args)))
+                 ,@(loop for (case-name _ . body) in cases
+                         for function-name in case-gensyms
+                         collect `(,case-name (&rest args)
+                                              (setf ,restart-function #',function-name)
+                                              (setf ,restart-function-args args)
+                                              (go ,re-entry-label)))))))))))
 
 (defmacro restart-labels (bindings &body body)
   `(recursive-restart-case
