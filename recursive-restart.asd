@@ -4,6 +4,6 @@
   :description "Restarts that can invoke themselves."
   :long-description "Restarts that can invoke themselves."
   :version "1"
-  :depends-on nil
+  :depends-on (:alexandria)
   :components
   ((:file "recursive-restart")))
