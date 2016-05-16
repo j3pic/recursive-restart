@@ -1,7 +1,6 @@
 (asdf:defsystem :recursive-restart
   :author ("Jeremy Phelps")
   :maintainer "Jeremy Phelps"
-  :license "MIT"
   :description "Restarts that can invoke themselves."
   :long-description "Restarts that can invoke themselves."
   :version "1"
