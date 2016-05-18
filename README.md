@@ -5,19 +5,19 @@ works exactly like CL's native `restart-case`, except you can invoke the restart
 handlers in a mutually-recursive fashion, such as this:
 
 
-   (let ((invoked-bar nil))
-     (recursive-restart-case
-          (invoke-restart 'foo)
-       (foo ()
-          (format t "Invoked FOO.~%")
-          (if invoked-bar
-              :done
-              (invoke-restart 'bar)))
-       (bar ()
-          (format t "Invoked BAR.~%")
-          (setf invoked-bar t)
-          (format t "Invoking FOO again...~%")
-          (invoke-restart 'foo))))
+    (let ((invoked-bar nil))
+      (recursive-restart-case
+           (invoke-restart 'foo)
+        (foo ()
+           (format t "Invoked FOO.~%")
+           (if invoked-bar
+               :done
+               (invoke-restart 'bar)))
+        (bar ()
+           (format t "Invoked BAR.~%")
+           (setf invoked-bar t)
+           (format t "Invoking FOO again...~%")
+           (invoke-restart 'foo))))
 
 Also provided is `restart-labels`, which is a wrapper macro that allows you to specify the handlers
 before the body, which gains an implicit PROGN. The syntax mirrors that of CL's `labels` form:
