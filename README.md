@@ -23,8 +23,8 @@ Also provided is `restart-labels`, which is a wrapper macro that allows you to s
 before the body, which gains an implicit PROGN. The syntax mirrors that of CL's `labels` form:
 
     (restart-labels
-        (foo () (format t "Invoked FOO.~%"))
-        (bar () (format t "Invoked BAR.~%"))
+       ((foo () (format t "Invoked FOO.~%"))
+        (bar () (format t "Invoked BAR.~%")))
       (format t "Starting body...~%")
       (invoke-restart 'foo))
 
